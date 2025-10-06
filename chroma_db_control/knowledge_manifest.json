@@ -1,0 +1,25 @@
+{
+  "generated_at": "2025-10-06T15:35:52.167774",
+  "files": {
+    "rozdzial110.txt": {
+      "size": 3974,
+      "mtime": 1759763014.729334,
+      "hash": "8828f949ea53d53f6344b48ac183325b"
+    },
+    "rozdzial187.txt": {
+      "size": 7051,
+      "mtime": 1759764732.662339,
+      "hash": "1a320d76cc0eb655587268c86bf04bd8"
+    },
+    "sample-org.txt": {
+      "size": 1351,
+      "mtime": 1759742863.150587,
+      "hash": "c29591a1eddb5b79266383fabb90f0e6"
+    },
+    "sample.txt": {
+      "size": 12139,
+      "mtime": 1759764942.9954069,
+      "hash": "b7bbffcda82ea3ee2dc80d787a1b9ea7"
+    }
+  }
+}

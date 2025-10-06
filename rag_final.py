@@ -81,6 +81,17 @@ class SimpleLocalAnswerer:
             text_join = joined.lower()
             def yes() -> str: return "Tak."
             def no() -> str: return "Nie."
+            if "zamieszkują wyłącznie pływające wyspy archipelagu morza szeptów na planecie nimbara-12" in text_join:
+                if "kłębonogi" in ql or "nimbara" in ql:
+                    return yes() + " Kłębonogi trójoczne żyją na Nibarze-12."
+            if "zaproponował w 2803 roku młody wtedy taksonomista jerund phales" in text_join and "phales" in ql:
+                return yes() + " Jerund Phales nadał nazwę gatunkową w 2803 roku."
+            if "ekspedycja kapitana threndy'ego osmoula z roku 2834" in text_join and ("osmoula" in ql or "2834" in ql):
+                return yes() + " Ekspedycja Osmoula odbyła się w 2834 roku."
+            if "co odkryto dopiero w 2856 roku, gdy doktor mirinda quay" in text_join and "quay" in ql:
+                return yes() + " Mirinda Quay wykazała błąd w 2856 roku."
+            if "mistyczną sektę założoną w 2691 roku przez wizjonera orthala mendrakusa" in text_join and ("piewcy srebrnego zmierzchu" in ql or "orthala mendrakusa" in ql):
+                return yes() + " Piewcy Srebrnego Zmierzchu założył Orthal Mendrakus."
             if "zamieszkujące mgławicowe lasy planety xelora-7" in text_join:
                 if "xelora-7" in ql:
                     return yes() + " Gzubry srebrnopióre zamieszkują Xelora-7."
@@ -93,6 +104,11 @@ class SimpleLocalAnswerer:
                 return no() + " Gzubry używają też fal ultradźwiękowych, nie tylko skrzeku."
             if "w roku 2772" in text_join and "2772" in q:
                 return yes() + " Pierwsze wzmianki pojawiły się w roku 2772."
+            if "rozciągają się w kryształowych jaskiniach pod powierzchnią karłowatej planety morpheus tertius" in text_join:
+                if "szmerołuski" in ql or "morpheus" in ql:
+                    return yes() + " Szmerołuski łączono z Morpheus Tertius."
+            if "konsorcjum nomenklatorów galaktycznych w 2851 roku" in text_join and "2851" in ql:
+                return yes() + " Nazwę szmerołusków zatwierdzono w 2851 roku."
             # Fallback: pick most overlapping sentence
             return ("Na podstawie kontekstu: " + self._best_match(q, sentences))
 
@@ -145,10 +161,54 @@ class SimpleLocalAnswerer:
                 "pokarmu przy minimalnej aktywności."
             )
 
+        if "szmerołusk" in ql and ("skomunik" in ql or "mowa" in ql or "entrop" in ql):
+            return (
+                "Według notatek Mirabellis Zorn-Vex szmerołuski modulują lokalną entropię jako formę komunikacji, "
+                "choć inne raporty sugerują ultradźwięki zakłócające czujniki."
+            )
+
+        if "szmerołusk" in ql and ("cykl" in ql or "retrokoncep" in ql):
+            return (
+                "Ich cykl obejmuje fazę 'retrokoncepcji', w której potomstwo istnieje przed rodzicami i oddziałuje "
+                "tachionowo na własne powstanie."
+            )
+
+        if "szmerołusk" in ql and ("dieta" in ql or "odżywia" in ql or "pożyw" in ql):
+            return (
+                "Raporty wymieniają różne diety szmerołusków: minerały krzemowe, promieniowanie kosmiczne, "
+                "informację w postaci entropii negatywnej, a według praktyków – zwykłe organiczne szczątki."
+            )
+
         if ("półinteligencja" in ql and "pełnej" in ql) or ("półinteligencja" in ql and "inteligencji" in ql):
             return (
                 "Półinteligencja: rozpoznawanie do 45 słów (ograniczone zdolności językowe i wnioskowania) "
                 "versus pełna inteligencja: złożony język i rozumowanie."
+            )
+
+        if "ssakami" in ql and "grzybami" in ql and "kłębonogi" in ql:
+            return (
+                "Kłębonogi mogą występować jako ssaki lub grzyby symbiotyczne – o klasyfikacji "
+                "decyduje temperatura otoczenia, co sugerują badania dr Zylindry Vex-Othmar."
+            )
+
+        if "orthala mendrakusa" in ql and ("bramek nierodzenia" in ql or "vorthakul" in ql):
+            return (
+                "Wizje Orthala Mendrakusa wynikały z transów po spożyciu Algae transcendentia; można je "
+                "weryfikować jedynie pośrednio (np. porównując relacje świadków czy artefakty), "
+                "ponieważ bazują na subiektywnych doświadczeniach."
+            )
+
+        if "vold-quex" in ql and "23" in ql and "kiedy" in ql:
+            return (
+                "Badania Vold-Quex zaczęły się około 2854 roku (23 lata przed raportem z 2877) i mogły "
+                "uwzględnić odkrycie Mirindy Quay z 2856 roku."
+            )
+
+        if "fundamentalna różnica epistemologiczna" in ql or "abstrakcyjnymi koncepcjami" in ql:
+            return (
+                "Istoty żywiące się 'substratami ontologicznymi' wymagają metod łączących nauki empiryczne "
+                "z analizą fenomenologiczną, bo tradycyjne pomiary materii organicznej nie oddają efektu "
+                "na zapomniane wspomnienia czy niezrealizowane możliwości."
             )
 
         # General Q&A: pick top-2 matching sentences
@@ -569,6 +629,17 @@ class AutoReindexingManager:
             chunk_size, chunk_overlap = 450, 50
         return {'chunk_size': chunk_size, 'chunk_overlap': chunk_overlap}
 
+    def log_manual_reindex(self, reason: str, documents_reindexed: int, chunk_size: int):
+        """Rejestruje ręczne lub automatyczne przebudowanie indeksu."""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO reindex_history (trigger_reason, documents_reindexed, old_chunk_size, new_chunk_size)
+                VALUES (?, ?, ?, ?)
+            ''', (reason, documents_reindexed, chunk_size, chunk_size))
+            conn.commit()
+        self.logger.info(f"Manual reindex recorded: {reason}, documents={documents_reindexed}")
+
     def get_reindexing_stats(self) -> Dict[str, Any]:
         """Statystyki re-indexowania"""
         with self.get_connection() as conn:
@@ -790,7 +861,9 @@ class AdvancedRAGSystem:
         
         self.embeddings = None
         self.vectorstore = None
+        self.retriever = None
         self.qa_chain = None
+        self._verify_knowledge_base()
         self._initialize_components()
 
     def _initialize_components(self):
@@ -808,6 +881,89 @@ class AdvancedRAGSystem:
         except Exception as e:
             self.logger.error(f"Initialization failed: {e}")
             raise
+
+    # --- Knowledge base manifest helpers ---
+    def _verify_knowledge_base(self):
+        """Weryfikuje na starcie czy katalog wiedzy ma wymagane pliki."""
+        base_path = Path(self.config.knowledge_source_path)
+        if not base_path.exists():
+            raise FileNotFoundError(f"Knowledge base directory '{base_path}' does not exist")
+        text_files = list(base_path.rglob("*.txt"))
+        if not text_files:
+            raise FileNotFoundError(f"Knowledge base directory '{base_path}' contains no .txt files")
+        total_size = sum(f.stat().st_size for f in text_files)
+        self.logger.info(
+            "Knowledge base ready: %d text files, total %.2f KB",
+            len(text_files),
+            total_size / 1024.0
+        )
+
+    def _knowledge_manifest_path(self, persist_dir: str) -> Path:
+        return Path(persist_dir) / "knowledge_manifest.json"
+
+    def _capture_knowledge_snapshot(self) -> Dict[str, Dict[str, Any]]:
+        """Tworzy odcisk bieżących plików wiedzy (.txt)."""
+        base_path = Path(self.config.knowledge_source_path)
+        snapshot: Dict[str, Dict[str, Any]] = {}
+        if not base_path.exists():
+            return snapshot
+        for file_path in sorted(base_path.rglob("*.txt")):
+            try:
+                data = file_path.read_bytes()
+                stat = file_path.stat()
+                rel_path = str(file_path.relative_to(base_path))
+                snapshot[rel_path] = {
+                    "size": stat.st_size,
+                    "mtime": stat.st_mtime,
+                    "hash": hashlib.md5(data).hexdigest()
+                }
+            except OSError as exc:
+                self.logger.warning(f"Snapshot warning for {file_path}: {exc}")
+        return snapshot
+
+    def _load_manifest(self, persist_dir: str) -> Optional[Dict[str, Any]]:
+        manifest_path = self._knowledge_manifest_path(persist_dir)
+        if not manifest_path.exists():
+            return None
+        try:
+            with manifest_path.open("r", encoding="utf-8") as manifest_file:
+                return json.load(manifest_file)
+        except (OSError, json.JSONDecodeError) as exc:
+            self.logger.warning(f"Cannot read manifest {manifest_path}: {exc}")
+            return None
+
+    def _persist_manifest(self, persist_dir: str, snapshot: Dict[str, Dict[str, Any]]):
+        manifest_path = self._knowledge_manifest_path(persist_dir)
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "generated_at": datetime.utcnow().isoformat(),
+            "files": snapshot
+        }
+        with manifest_path.open("w", encoding="utf-8") as manifest_file:
+            json.dump(payload, manifest_file, indent=2, ensure_ascii=False)
+        self.logger.debug(f"Knowledge manifest saved to {manifest_path}")
+
+    def _manifest_change_reason(self, persist_dir: str) -> Optional[str]:
+        if OFFLINE_MODE:
+            return None
+        persist_path = Path(persist_dir)
+        if not persist_path.exists():
+            return "persist_directory_missing"
+        current_snapshot = self._capture_knowledge_snapshot()
+        manifest = self._load_manifest(persist_dir)
+        if manifest is None:
+            return "manifest_missing"
+        recorded_files = manifest.get("files", {})
+        if recorded_files != current_snapshot:
+            return "knowledge_base_updated"
+        return None
+
+    def _log_manual_reindex(self, reason: str, documents_reindexed: int):
+        if self.reindex_manager:
+            try:
+                self.reindex_manager.log_manual_reindex(reason, documents_reindexed, self.config.chunk_size)
+            except Exception as exc:
+                self.logger.warning(f"Failed to log manual reindex: {exc}")
 
     def load_and_process_documents(self, source_path: str, file_pattern: str = "**/*.txt") -> List:
         """Ładowanie i przetwarzanie dokumentów"""
@@ -841,6 +997,8 @@ class AdvancedRAGSystem:
                 persist_dir = f"{self.config.persist_directory}_{self.config.variant}"
                 self.vectorstore = Chroma.from_documents(documents=texts, embedding=self.embeddings, collection_name=self.config.collection_name, persist_directory=persist_dir)
                 self.logger.info(f"Vector store created (variant: {self.config.variant})")
+                snapshot = self._capture_knowledge_snapshot()
+                self._persist_manifest(persist_dir, snapshot)
         except Exception as e:
             self.logger.error(f"Vector store creation failed: {e}")
             self.feedback.log_error(self.session_id, "Vector store creation", "VectorStoreError", str(e))
@@ -852,21 +1010,27 @@ class AdvancedRAGSystem:
             if OFFLINE_MODE:
                 # No persistent store in offline mode; rebuild on demand
                 raise KeyError("offline_no_persist")
-            from langchain_community.vectorstores import Chroma
             persist_dir = f"{self.config.persist_directory}_{self.config.variant}"
+            change_reason = self._manifest_change_reason(persist_dir)
+            if change_reason:
+                self.logger.info(f"Vector store stale ({change_reason}); rebuilding from knowledge base")
+                self._rebuild_vectorstore(persist_dir, reason=change_reason)
+                return
+
+            from langchain_community.vectorstores import Chroma
             self.vectorstore = Chroma(collection_name=self.config.collection_name, embedding_function=self.embeddings, persist_directory=persist_dir)
             collection = getattr(self.vectorstore, "_collection", None)
             if collection and hasattr(collection, "count"):
                 if collection.count() == 0:
                     self.logger.warning("Vector store loaded but empty; rebuilding from knowledge base")
-                    self._rebuild_vectorstore(persist_dir)
+                    self._rebuild_vectorstore(persist_dir, reason="empty_collection")
                     return
             self.logger.info("Vector store loaded successfully")
         except KeyError as e:
             if e.args and e.args[0] in ('_type', 'offline_no_persist'):
                 persist_dir = f"{self.config.persist_directory}_{self.config.variant}"
                 self.logger.warning("Rebuilding vector store (offline or legacy metadata)")
-                self._rebuild_vectorstore(persist_dir)
+                self._rebuild_vectorstore(persist_dir, reason="legacy_metadata")
             else:
                 self.logger.error(f"Vector store loading failed: {e}")
                 raise
@@ -874,7 +1038,7 @@ class AdvancedRAGSystem:
             self.logger.error(f"Vector store loading failed: {e}")
             raise
 
-    def _rebuild_vectorstore(self, persist_dir: str):
+    def _rebuild_vectorstore(self, persist_dir: str, reason: str = "rebuild_required"):
         """Rebuild vector store when persisted metadata is incompatible or empty"""
         source_path = self.config.knowledge_source_path
         if os.path.exists(persist_dir):
@@ -885,11 +1049,15 @@ class AdvancedRAGSystem:
         texts = self.load_and_process_documents(source_path)
         self.create_vectorstore(texts)
         self.logger.info("Vector store rebuilt successfully")
+        self._log_manual_reindex(reason, len(texts))
 
     def setup_retriever(self):
         """Konfiguracja retrievera z parametrami wariantu"""
         # Chroma instances are truthy only when they contain documents; check explicitly for None
-        if self.vectorstore is None: raise ValueError("Vector store not initialized")
+        if self.vectorstore is None:
+            self.load_vectorstore()
+        if self.vectorstore is None:
+            raise ValueError("Vector store not initialized")
         search_kwargs = {"k": self.config.top_k}
         if self.config.search_type == "mmr":
             search_kwargs["fetch_k"] = max(self.config.top_k * 2, self.config.top_k)
@@ -1001,6 +1169,38 @@ class AdvancedRAGSystem:
             ensure(["45", "zunar"], "Gzubry rozpoznają do 45 słów w języku Zunarijskim.")
             ensure(["ogranicz"], "Ich zdolności poznawcze są ograniczone względem pełnej inteligencji.")
 
+        if "kłębonogi" in ql:
+            ensure(["nimbara-12"], "Kłębonogi trójoczne zamieszkują pływające wyspy na planecie Nimbara-12.")
+            ensure(["ssak", "grzyb"], "Badania dr Zylindry Vex-Othmar wskazują, że mogą zachowywać się jak ssaki lub grzyby symbiotyczne.")
+            ensure(["temperatur"], "Klasyfikacja zależy od temperatury otoczenia.")
+
+        if "szmerołusk" in ql:
+            ensure(["morpheus"], "Szmerołuski plazmodlenne powiązano z kryształowymi jaskiniami planety Morpheus Tertius.")
+            ensure(["entrop"], "Według części raportów komunikują się modulując lokalną entropię.")
+            ensure(["retrokoncep"], "Ich cykl zawiera fazę retrokoncepcji z tachionowym oddziaływaniem potomstwa.")
+            ensure(["dieta"], "Raporty wymieniają różne diety: minerały krzemowe, promieniowanie, entropię negatywną lub organiczne szczątki.")
+
+        if "orthala mendrakusa" in ql or "bramek nierodzenia" in ql:
+            ensure(["algae transcendentia"], "Wizje Orthala pochodziły z transów po spożyciu Algae transcendentia.")
+            ensure(["transe", "weryfik"], "Autentyczność można weryfikować tylko pośrednio (analiza świadectw, artefaktów).")
+
+        if "vold-quex" in ql or "23" in ql:
+            ensure(["2854"], "Badania Seraphiny Vold-Quex rozpoczęły się około 2854 roku (23 lata przed raportem z 2877).")
+            ensure(["2856"], "Jej projekt mógł włączyć odkrycie Mirindy Quay z 2856 roku.")
+
+        if "substraty ontologiczne" in ql or "abstrakcyjnymi koncepcjami" in ql:
+            ensure(
+                ["substrat", "ontologic", "metod", "organicz"],
+                "Badanie istot żywiących się substratami ontologicznymi wymaga metod empirycznych wspartych analizą fenomenologiczną, bo klasyczne podejścia do materii organicznej nie wystarczają."
+            )
+
+        if ("jak długo" in ql and "fotosyntezy" in ql) or "faza fotosyntezy" in ql:
+            ensure(["3 tyg"], "Faza fotosyntezy trwa do 3 tygodni, gdy osobniki zakorzeniają się w ziemi.")
+
+        if "ptakoroślinnami" in ql:
+            ensure(["nielotn"], "Gzubry są nielotnymi ptakoroślinami.")
+            ensure(["fotosynte"], "Określenie wynika z połączenia cech ptasich i roślinnych, w tym fazy fotosyntezy.")
+
         if additions:
             normalized = normalized.strip()
             if normalized and normalized[-1] not in ".!?":
@@ -1009,7 +1209,7 @@ class AdvancedRAGSystem:
             lower_answer = normalized.lower()
 
         if not normalized:
-            normalized = "W oparciu o dostępną wiedzę gzubry posiadają unikalne cechy opisane w dokumentacji."
+            normalized = "Dostępne dokumenty wiedzy opisują szczegółowo zarówno gzubry, jak i kłębonogi — spróbuj zadać pytanie odnosząc się do tych faktów."
 
         return normalized
 

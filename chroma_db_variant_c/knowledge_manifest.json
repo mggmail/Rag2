@@ -1,0 +1,40 @@
+{
+  "generated_at": "2025-10-06T16:15:46.607384",
+  "files": {
+    "biografia.txt": {
+      "size": 6644,
+      "mtime": 1759767336.3099,
+      "hash": "b8fe1fabd6a488fd04c98ba770b545c0"
+    },
+    "esej.txt": {
+      "size": 4330,
+      "mtime": 1759766648.5166118,
+      "hash": "a211cabe5d9f6d3d4a7e949688de3a5a"
+    },
+    "rodzial203.txt": {
+      "size": 1634,
+      "mtime": 1759765914.6921213,
+      "hash": "1dbe20a8695eeb5bc4635c916bda064e"
+    },
+    "rozdzial110.txt": {
+      "size": 3974,
+      "mtime": 1759763014.729334,
+      "hash": "8828f949ea53d53f6344b48ac183325b"
+    },
+    "rozdzial187.txt": {
+      "size": 7051,
+      "mtime": 1759764732.662339,
+      "hash": "1a320d76cc0eb655587268c86bf04bd8"
+    },
+    "sample-org.txt": {
+      "size": 1351,
+      "mtime": 1759742863.150587,
+      "hash": "c29591a1eddb5b79266383fabb90f0e6"
+    },
+    "sample.txt": {
+      "size": 12139,
+      "mtime": 1759764942.9954069,
+      "hash": "b7bbffcda82ea3ee2dc80d787a1b9ea7"
+    }
+  }
+}
