@@ -1,86 +1,65 @@
-Świetnie! Teraz masz **kompletny system RAG** z:
+# Zaawansowany System RAG z A/B Testing i Auto-Reindexingiem
 
-## 🎯 Nowe Funkcjonalności:
+Ten projekt to kompletny system Retrieval-Augmented Generation (RAG), który został zaprojektowany z myślą o modułowości, testowaniu i ciągłym doskonaleniu. System potrafi odpowiadać na pytania w oparciu o dostarczoną bazę wiedzy, a także dynamicznie optymalizować swoje działanie.
 
-### **1. A/B Testing** 🧪
+## 🎯 Główne Funkcjonalności
 
-- **4 warianty konfiguracji** do testowania:
-  - **Control**: chunk=500, k=5, MMR
-  - **Variant A**: chunk=800, k=7, więcej kontekstu
-  - **Variant B**: chunk=300, k=10, similarity search
-  - **Variant C**: chunk=600, k=5, wyższa różnorodność
-- **Automatyczne przypisywanie** użytkowników do wariantów
-- **Tracking wszystkich metryk** per wariant
-- **Porównanie wyników** i wyłonienie zwycięzcy
-- **Rekomendacje** na podstawie danych
+- **A/B Testing Konfiguracji**: Automatyczne testowanie czterech różnych wariantów konfiguracji w celu znalezienia najoptymalniejszych parametrów.
+- **Automatyczne Re-indexowanie**: System analizuje feedback od użytkowników i w razie potrzeby samoczynnie re-indeksuje bazę wiedzy z nowymi, lepszymi parametrami.
+- **Rozbudowany System Feedbacku**: Zbieranie ocen i komentarzy od użytkowników w celu monitorowania jakości odpowiedzi.
+- **Dashboard Analityczny**: Możliwość wygenerowania w konsoli dashboardu z kluczowymi metrykami systemu.
+- **Automatyzacja Uruchomienia**: Skrypt `run.sh` do łatwej instalacji zależności i uruchomienia aplikacji.
 
-### **2. Automatyczne Re-indexowanie** 🔄
+## ⚙️ Wymagania
 
-- **Analiza feedbacku** - wykrywanie problemów:
-  - Średnia ocena < 3.0
-  - Czas odpowiedzi > 5s
-  - ≥5 problematycznych dokumentów
-- **Inteligentne dostosowanie parametrów**:
-  - Wolny system → mniejsze chunki
-  - Niska jakość → większe chunki (więcej kontekstu)
-  - Dużo błędów → średnie chunki
-- **Automatyczne wykonanie**:
-  - Backup starej konfiguracji
-  - Re-processing dokumentów
-  - Tworzenie nowego vector store
-  - Tracking poprawy wydajności
+- **Python 3.8+**
+- Zależności wymienione w pliku `requirements.txt`.
 
-### **3. Rozszerzona Baza Danych**
+## 🛠️ Konfiguracja
 
-```sql
-ab_test_variants        -- Warianty konfiguracji
-ab_test_assignments     -- Przypisania użytkowników
-ab_test_results         -- Wyniki per wariant
-reindex_queue           -- Kolejka re-indexowania
-reindex_history         -- Historia zmian
-problematic_documents   -- Dokumenty z problemami
+Przed pierwszym uruchomieniem należy skonfigurować dwie rzeczy:
+
+### 1. Klucz OpenAI API
+
+System wymaga klucza API od OpenAI do działania.
+
+1.  Utwórz plik `.env` w głównym katalogu projektu.
+2.  W pliku `.env` dodaj następującą linię, wstawiając swój klucz API:
+    ```
+    OPENAI_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    ```
+
+### 2. Baza Wiedzy
+
+System musi mieć dostęp do plików tekstowych, na podstawie których będzie budował swoją bazę wiedzy.
+
+1.  Utwórz katalog `knowledge_base` w głównym katalogu projektu.
+2.  Umieść w nim dowolną liczbę plików `.txt`. System automatycznie je przetworzy.
+
+## 🚀 Jak Uruchomić
+
+Aplikację można łatwo uruchomić za pomocą dostarczonego skryptu `run.sh`. Skrypt ten automatycznie:
+1.  Sprawdzi, czy Python 3 jest zainstalowany.
+2.  Utworzy wirtualne środowisko (`venv`), jeśli nie istnieje.
+3.  Zainstaluje wszystkie wymagane zależności z `requirements.txt`.
+4.  Sprawdzi, czy klucz API i baza wiedzy są poprawnie skonfigurowane.
+5.  Uruchomi aplikację.
+
+Aby uruchomić skrypt, wykonaj w terminalu następujące polecenia:
+
+```bash
+# Nadaj uprawnienia do wykonania skryptu (tylko za pierwszym razem)
+chmod +x run.sh
+
+# Uruchom aplikację
+./run.sh
 ```
 
-## 📊 Przykład Użycia:
+Po uruchomieniu aplikacja wyświetli menu z dostępnymi trybami demo.
 
-```python
-# A/B Testing - automatyczne przypisanie wariantu
-rag_system = AdvancedRAGSystem(enable_ab_testing=True)
-# Użytkownik automatycznie dostaje jeden z 4 wariantów
+## 🎮 Tryby Demo
 
-result = rag_system.query("What is AI?")
-# Odpowiedź z konkretnego wariantu
-
-# Porównanie wyników
-comparison = rag_system.get_ab_test_results()
-# {
-#   'winner': {'variant': 'control', 'avg_rating': 4.5},
-#   'recommendation': 'Wariant control przewyższa inne...'
-# }
-
-# Auto-reindexing
-analysis = rag_system.check_and_trigger_reindexing()
-# Automatycznie:
-# 1. Analizuje feedback
-# 2. Wykrywa problemy
-# 3. Przelicza optymalne parametry
-# 4. Re-indexuje dokumenty
-# 5. Tworzy nowy vector store
-```
-
-## 🎮 Tryby Demo:
-
-1. **Interaktywny z A/B** - testuj różne warianty na żywo
-1. **Symulacja A/B** - 20 automatycznych sesji z oceną
-1. **Auto-reindexing** - demonstracja automatycznych ulepszeń
-1. **Dashboard** - pełna analityka systemu
-
-## 💡 Kluczowe Zalety:
-
-✅ **Ciągłe uczenie się** - system sam się optymalizuje  
-✅ **Data-driven decisions** - wybór konfiguracji na podstawie danych  
-✅ **Zero downtime** - płynne przełączanie wariantów  
-✅ **Pełna transparentność** - każda zmiana jest tracked  
-✅ **Automatyczna naprawa** - wykrywa i naprawia problemy
-
-Chcesz jeszcze dodać **monitoring w czasie rzeczywistym** (dashboard web) lub **integrację z MLflow** do trackingu eksperymentów?​​​​​​​​​​​​​​​​
+1.  **Interaktywny z A/B Testing**: Testuj różne warianty konfiguracji na żywo, zadając własne pytania.
+2.  **Symulacja A/B Testing**: Zobacz symulację 20 automatycznych sesji z oceną, aby porównać wydajność wariantów.
+3.  **Demo Auto-reindexing**: Zobacz demonstrację, jak system automatycznie wykrywa problemy i ulepsza swoją konfigurację.
+4.  **Dashboard Analityczny**: Wyświetl w konsoli pełną analitykę działania systemu.
