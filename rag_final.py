@@ -672,7 +672,8 @@ class AdvancedRAGSystem:
 
     def setup_retriever(self):
         """Konfiguracja retrievera z parametrami wariantu"""
-        if not self.vectorstore: raise ValueError("Vector store not initialized")
+        # Chroma instances are truthy only when they contain documents; check explicitly for None
+        if self.vectorstore is None: raise ValueError("Vector store not initialized")
         search_kwargs = {"k": self.config.top_k, "fetch_k": self.config.top_k * 2}
         if self.config.search_type == "mmr": search_kwargs["lambda_mult"] = self.config.lambda_mult
         base_retriever = self.vectorstore.as_retriever(search_type=self.config.search_type, search_kwargs=search_kwargs)
