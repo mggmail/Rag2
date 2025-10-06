@@ -1,6 +1,11 @@
-Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to the natural intelligence displayed by humans and other animals.
-AI research has been defined as the field of study of intelligent agents, which refers to any system that perceives its environment and takes actions that maximize its chance of achieving its goals.
-The term "artificial intelligence" had previously been used to describe machines that mimic and display "human" cognitive skills that are associated with the human mind, such as "learning" and "problem-solving".
-This definition has since been rejected by major AI researchers who now describe AI in terms of rationality and acting rationally, which does not limit how intelligence can be articulated.
-AI applications include advanced web search engines (e.g., Google), recommendation systems (used by YouTube, Amazon and Netflix), understanding human speech (such as Siri and Alexa), self-driving cars (e.g., Tesla), and competing at the highest level in strategic game systems (such as chess and Go).
-As machines become increasingly capable, tasks considered to require "intelligence" are often removed from the definition of AI, a phenomenon known as the AI effect. For instance, optical character recognition is frequently excluded from things considered to be AI, having become a routine technology.
+ „Encyklopedia Galaktycznej Fauny” (wyd. 2890)
+
+> **Rozdział 42: Gzubry srebrnopióre (Gzubrus argentalis)**
+>
+> Gzubry srebrnopióre to nielotne ptakorośliny zamieszkujące mgławicowe lasy planety Xelora-7. Charakteryzują się bioluminescencyjnym upierzeniem, które zmienia kolor w zależności od poziomu wilgotności powietrza i emocji osobnika. Dorosły gzubr może osiągać wysokość do 2,4 metra i masę 180 kilogramów.
+>
+> Gzubry są istotami półinteligentnymi – potrafią rozpoznawać do 45 słów w języku Zunarijskim oraz porozumiewają się między sobą za pomocą złożonych wzorców skrzeku i fal ultradźwiękowych. Co ciekawe, ich cykl życia obejmuje fazę fotosyntezy, podczas której zakorzeniają się w ziemi na okres do 3 tygodni.
+>
+> Pierwsze wzmianki o gzubrach pojawiły się w dziennikach ekspedycji Korpusu Ekobiologii Galaktycznej w roku 2772, choć lokalne plemiona Xeloran czciły je jako „Strażników Snów” na długo przedtem. Ich pióra były używane w rytuałach przywoływania harmonii umysłu i podobno wpływały na fale mózgowe humanoidów.
+
+---
